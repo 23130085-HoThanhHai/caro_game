@@ -1,0 +1,26 @@
+<%@ page pageEncoding="UTF-8" %>
+<%
+  String activeNav = (String) request.getAttribute("activeNav");
+  if (activeNav == null) {
+    activeNav = "";
+  }
+%>
+<header class="site-header" role="banner">
+  <div class="container header-inner">
+    <a class="brand" href="index.jsp" aria-label="Gomoku Zen">
+      <span class="brand-name">Gomoku Zen</span>
+    </a>
+
+    <nav class="nav" aria-label="Điều hướng">
+      <a class="nav-link<%= "home".equals(activeNav) ? " is-active" : "" %>" href="index.jsp">Sảnh</a>
+      <a class="nav-link<%= "leaderboard".equals(activeNav) ? " is-active" : "" %>" href="leaderboard.jsp">Bảng xếp hạng</a>
+      <a class="nav-link<%= "rules".equals(activeNav) ? " is-active" : "" %>" href="rules.jsp">Luật chơi</a>
+      <a class="nav-link<%= "community".equals(activeNav) ? " is-active" : "" %>" href="community.jsp">Cộng đồng</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="btn btn-ghost" href="#">Đăng nhập</a>
+      <a class="btn btn-primary" href="#">Đăng ký</a>
+    </div>
+  </div>
+</header>
