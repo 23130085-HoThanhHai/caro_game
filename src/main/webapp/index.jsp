@@ -72,7 +72,7 @@
         </div>
 
         <div class="container mode-grid">
-          <a class="card mode-card" href="#">
+          <a class="card mode-card" href="create-room">
             <div class="mode-icon mode-icon--peach" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
@@ -97,7 +97,7 @@
             <span class="card-link">Tìm kiếm <span aria-hidden="true">→</span></span>
           </a>
 
-          <a class="card mode-card is-muted" href="#">
+          <a class="card mode-card is-muted" href="local-play">
             <div class="mode-icon mode-icon--muted" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
