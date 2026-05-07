@@ -85,17 +85,80 @@
             <span class="card-link">Bắt đầu <span aria-hidden="true">→</span></span>
           </a>
 
-          <a class="card mode-card" href="#">
-            <div class="mode-icon mode-icon--blue" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" />
-                <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-              </svg>
-            </div>
-            <h3 class="card-title">Tìm Phòng</h3>
-            <p class="card-desc">Đạo qua danh sách các phòng đang chờ đối thủ gia nhập.</p>
-            <span class="card-link">Tìm kiếm <span aria-hidden="true">→</span></span>
-          </a>
+<%--          <a class="card mode-card" href="#">--%>
+<%--            <div class="mode-icon mode-icon--blue" aria-hidden="true">--%>
+<%--              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">--%>
+<%--                <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" />--%>
+<%--                <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />--%>
+<%--              </svg>--%>
+<%--            </div>--%>
+
+<%--            <h3 class="card-title">Tìm Phòng</h3>--%>
+<%--            <p class="card-desc">Đạo qua danh sách các phòng đang chờ đối thủ gia nhập.</p>--%>
+<%--            <span class="card-link">Tìm kiếm <span aria-hidden="true">→</span></span>--%>
+          <%--          </a>--%>
+            <style>
+
+              .feature-card{
+                display: block;
+                text-decoration: none;
+                background: #ffffff;
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+                color: #333;
+              }
+
+              .feature-card:hover{
+                transform: translateY(-5px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+              }
+
+              .card-title{
+                font-size: 24px;
+                margin-bottom: 12px;
+                color: #222;
+              }
+
+              .card-desc{
+                font-size: 15px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+                color: #666;
+              }
+
+              .card-link{
+                font-weight: bold;
+                color: #3498db;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+              }
+
+            </style>
+
+            <a href="find-room" class="feature-card">
+              <div class="mode-icon mode-icon--blue" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" />
+                  <path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </div>
+
+              <h3 class="card-title">
+                Tìm Phòng
+              </h3>
+
+              <p class="card-desc">
+                Dạo qua danh sách các phòng đang chờ đối thủ gia nhập.
+              </p>
+
+              <span class="card-link">
+                  Tìm kiếm <span aria-hidden="true">→</span>
+              </span>
+
+            </a>
 
           <a class="card mode-card is-muted" href="local-play">
             <div class="mode-icon mode-icon--muted" aria-hidden="true">
