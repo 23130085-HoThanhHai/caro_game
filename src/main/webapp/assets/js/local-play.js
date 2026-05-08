@@ -72,46 +72,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- XỬ LÝ CLICK Ô CỜ ---
     function handleCellClick(e) {
+        // [UC-05: Điều kiện tiên quyết] Kiểm tra trạng thái trò chơi
         if (isGameOver) return;
 
+        // [UC-05.1] Người chơi chọn một ô trống bằng cách click chuột
         const cell = e.currentTarget;
+
+        // [UC-05.2] Hệ thống xác định vị trí của ô thông qua thuộc tính data-index
         const index = parseInt(cell.getAttribute("data-index"));
 
+        // [UC-05.3 / A1.1] Hệ thống kiểm tra và xác nhận ô được chọn hiện tại đang trống
+        // [A1.2] Nếu ô đã có quân cờ (boardState[index] !== null), hệ thống bỏ qua sự kiện click
         if (boardState[index] !== null) return;
 
-        // Phát âm thanh đánh cờ
+        // [UC-05.4] Hệ thống phát âm thanh đánh cờ (soundMove)
         if(soundMove) {
             soundMove.currentTime = 0;
             soundMove.play().catch(e => console.log("Audio play prevented"));
         }
 
+        // [UC-05.5] Hệ thống ghi nhận nước đi vào trạng thái bàn cờ và hiển thị quân cờ
         boardState[index] = currentPlayer;
-        moveHistory.push(index);
         cell.classList.add(`has-${currentPlayer}`);
 
-        // Kiểm tra thắng - Nhận về mảng index các quân thắng (nếu có)
+        // [UC-05.6] Hệ thống lưu nước đi vào lịch sử di chuyển (moveHistory)
+        moveHistory.push(index);
+
+        // [UC-05.7] Hệ thống kiểm tra điều kiện thắng hoặc hòa
         const winCombo = checkWin(index);
+
+        // [A2] Luồng thay thế: Người chơi giành chiến thắng
         if (winCombo) {
+            // [A2.1 -> A2.5] Xử lý thắng: phát âm thanh, highlight, cập nhật điểm và kết thúc game
             handleWin(currentPlayer, winCombo);
             return;
         }
 
+        // [A3] Luồng thay thế: Trận đấu hòa (Hết ô trống)
+        // [A3.6] Kiểm tra nếu moveHistory.length === TOTAL_CELLS (225 ô)
         if (moveHistory.length === TOTAL_CELLS) {
+            // [A3.7] Hiển thị thông báo hòa và kết thúc trò chơi
             endGame("Hòa Nhau!", "Bàn cờ đã kín, trận đấu kết thúc với kết quả Hòa!");
             return;
         }
 
+        // [UC-05.8] Luồng chính: Hệ thống thực hiện chuyển lượt (switchTurn)
         switchTurn();
     }
 
     // --- ĐỔI LƯỢT ---
     function switchTurn() {
+        // [UC-05.8] Đổi quân cờ của người chơi hiện tại
         currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
 
-        // Đổi class hover cho bàn cờ
         boardElement.classList.remove("turn-black", "turn-white");
         boardElement.classList.add(`turn-${currentPlayer}`);
 
+        // [UC-05.8] Cập nhật giao diện người chơi đang hoạt động (is-active)
         if (currentPlayer === 'black') {
             playerBoxes[0].classList.add("is-active");
             playerBoxes[1].classList.remove("is-active");
@@ -120,28 +137,30 @@ document.addEventListener("DOMContentLoaded", () => {
             playerBoxes[0].classList.remove("is-active");
         }
 
-        // Reset bộ đếm giờ
+        // [UC-05.8] Đặt lại và khởi động đồng hồ đếm ngược (30 giây)
         startTimer();
     }
 
     // --- ĐỒNG HỒ ĐẾM NGƯỢC ---
     function startTimer() {
         clearInterval(timerInterval);
-        timeLeft = TIME_PER_TURN;
+        timeLeft = TIME_PER_TURN; // 30 giây
         updateTimerUI();
 
         timerInterval = setInterval(() => {
             timeLeft--;
             updateTimerUI();
 
+            // [A4] Luồng thay thế: Hết thời gian suy nghĩ (Timeout)
             if (timeLeft <= 0) {
                 clearInterval(timerInterval);
+                // [A4.1] Phát âm thanh cảnh báo hết giờ
                 if(soundTimeout) soundTimeout.play().catch(e=>{});
 
-                // Hết giờ xử thua luôn người đang đi
                 const loser = currentPlayer === 'black' ? 'Người chơi 1' : 'Người chơi 2';
                 const winnerColor = currentPlayer === 'black' ? 'white' : 'black';
 
+                // [A4.2 -> A4.4] Tự động xử thua, hiển thị thông báo và kết thúc trò chơi
                 handleWin(winnerColor, null, `${loser} đã hết thời gian!`);
             }
         }, 1000);
@@ -254,15 +273,20 @@ document.addEventListener("DOMContentLoaded", () => {
         startTimer(); // Khởi động lại đồng hồ
     }
 
+    // --- HOÀN TÁC ---
     function undoMove() {
+        // [A5: Điều kiện] Kiểm tra game chưa kết thúc và có nước đi để lùi
         if (isGameOver || moveHistory.length === 0) return;
 
+        // [A5.1] Hệ thống lấy nước đi cuối cùng từ moveHistory
         const lastMoveIndex = moveHistory.pop();
         const lastPlayer = boardState[lastMoveIndex];
 
+        // [A5.2] Hệ thống xóa quân cờ tại vị trí đó trên giao diện và trong boardState
         boardState[lastMoveIndex] = null;
         cells[lastMoveIndex].classList.remove(`has-${lastPlayer}`);
 
+        // [A5.3] Hệ thống chuyển lại lượt đi cho người vừa thực hiện và đặt lại đồng hồ
         switchTurn();
     }
 
