@@ -27,19 +27,27 @@
 
                 <div class="game-layout">
                     <div class="players-status">
-                        <div class="player-box is-active">
+                        <div class="player-box is-active" id="box-black">
                             <div class="player-stone stone-black"></div>
                             <div class="player-info">
                                 <div class="player-name">Người chơi 1</div>
+                                <div class="player-stats">
+                                    <span class="score">Điểm: <strong id="score-black">0</strong></span>
+                                    <span class="timer hidden" id="timer-black">30s</span>
+                                </div>
                                 <div class="turn-indicator">Đang đi...</div>
                             </div>
                         </div>
 
                         <div class="vs-text">VS</div>
 
-                        <div class="player-box">
+                        <div class="player-box" id="box-white">
                             <div class="player-info" style="text-align: right;">
                                 <div class="player-name">Người chơi 2</div>
+                                <div class="player-stats">
+                                    <span class="timer hidden" id="timer-white">30s</span>
+                                    <span class="score">Điểm: <strong id="score-white">0</strong></span>
+                                </div>
                                 <div class="turn-indicator">Chờ lượt</div>
                             </div>
                             <div class="player-stone stone-white"></div>
@@ -85,5 +93,17 @@
         </section>
     </main>
 </div>
+<div id="custom-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h3 id="modal-title" class="modal-title">Thông báo</h3>
+        <p id="modal-message" class="modal-message">Nội dung thông báo</p>
+        <div id="modal-actions" class="modal-actions">
+        </div>
+    </div>
+</div>
+<audio id="sound-move" src="assets/audio/move.mp3" preload="auto"></audio>
+<audio id="sound-win" src="assets/audio/win.mp3" preload="auto"></audio>
+<audio id="sound-timeout" src="assets/audio/timeout.mp3" preload="auto"></audio>
+<script src="assets/js/local-play.js"></script>
 </body>
 </html>

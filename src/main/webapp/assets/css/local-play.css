@@ -203,3 +203,156 @@
         flex-direction: row-reverse;
     }
 }
+/* --- UI Modal Custom --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(16, 24, 40, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 1;
+    visibility: visible;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.modal-box {
+    background: #ffffff;
+    padding: 32px 24px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(0) scale(1);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.hidden .modal-box {
+    transform: translateY(20px) scale(0.95);
+}
+
+.modal-title {
+    margin: 0 0 12px 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.modal-message {
+    margin: 0 0 24px 0;
+    font-size: 16px;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+}
+
+.btn-cancel {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-cancel:hover {
+    background: #e5e7eb;
+}
+
+.btn-confirm {
+    background: var(--accent, #1A4D2E); /* Tông màu xanh lá nếu bạn đang dùng ở các project trước, hoặc thay bằng màu game */
+    color: white;
+}
+
+.btn-confirm:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 12px rgba(26, 77, 46, 0.2);
+}
+/* --- Bổ sung UI Nâng Cấp --- */
+.player-stats {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+.score {
+    color: #1A4D2E;
+    background: rgba(26, 77, 46, 0.1);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.timer {
+    background: #ef4444;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    min-width: 36px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.timer.hidden {
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.timer.warning {
+    animation: pulse-timer 1s infinite;
+    background: #b91c1c;
+}
+
+@keyframes pulse-timer {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+/* Hiệu ứng Hover - Nhìn trước nước đi */
+.caro-board.turn-black .caro-cell:not([class*="has-"]):hover .stone-slot {
+    background: radial-gradient(circle at 30% 30%, rgba(74, 74, 74, 0.5), rgba(26, 26, 26, 0.5));
+    transform: scale(1);
+}
+
+.caro-board.turn-white .caro-cell:not([class*="has-"]):hover .stone-slot {
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), rgba(212, 212, 212, 0.6));
+    transform: scale(1);
+}
+
+/* Hiệu ứng Highlight chiến thắng */
+.caro-board.game-over .caro-cell:not(.win-highlight) {
+    opacity: 0.4; /* Làm mờ các quân cờ không nằm trong chuỗi thắng */
+}
+
+.caro-cell.win-highlight .stone-slot {
+    animation: win-pulse 1s infinite alternate;
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.6) !important;
+    border: 2px solid #FFD700;
+}
+
+@keyframes win-pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.15); }
+}
