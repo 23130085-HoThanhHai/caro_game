@@ -1,9 +1,23 @@
 <%@ page pageEncoding="UTF-8" %>
+<%@ page import="vn.edu.hcmuaf.fit.demo3.model.AuthUser" %>
+<%!
+  private static String h(String s) {
+    if (s == null) return "";
+    return s
+      .replace("&", "&amp;")
+      .replace("<", "&lt;")
+      .replace(">", "&gt;")
+      .replace("\"", "&quot;")
+      .replace("'", "&#x27;");
+  }
+%>
 <%
   String activeNav = (String) request.getAttribute("activeNav");
   if (activeNav == null) {
     activeNav = "";
   }
+
+  AuthUser authUser = (AuthUser) session.getAttribute("authUser");
 %>
 <header class="site-header" role="banner">
   <div class="container header-inner">
@@ -19,8 +33,13 @@
     </nav>
 
     <div class="header-actions">
-      <a class="btn btn-ghost" href="#">Đăng nhập</a>
-      <a class="btn btn-primary" href="#">Đăng ký</a>
+      <% if (authUser == null) { %>
+        <a class="btn btn-ghost" href="login">Đăng nhập</a>
+        <a class="btn btn-primary" href="register">Đăng ký</a>
+      <% } else { %>
+        <span class="btn btn-ghost" aria-label="Tài khoản"><%= h(authUser.effectiveName()) %></span>
+        <a class="btn btn-outline" href="logout">Đăng xuất</a>
+      <% } %>
     </div>
   </div>
 </header>

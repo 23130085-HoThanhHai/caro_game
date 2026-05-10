@@ -130,6 +130,27 @@ CREATE TABLE IF NOT EXISTS room_members (
   CONSTRAINT ck_room_members_seat_no CHECK (seat_no IS NULL OR seat_no IN (1,2))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Bảng đơn giản cho flow tạo phòng / vào phòng (Servlet + JSP)
+CREATE TABLE IF NOT EXISTS room_players (
+  id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  room_id         BIGINT UNSIGNED NOT NULL,
+  user_id         BIGINT UNSIGNED NOT NULL,
+  role            ENUM('HOST','PLAYER') NOT NULL DEFAULT 'PLAYER',
+  created_at      DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_room_players_room_user (room_id, user_id),
+  KEY idx_room_players_room (room_id),
+  KEY idx_room_players_user (user_id),
+
+  CONSTRAINT fk_room_players_room
+    FOREIGN KEY (room_id) REFERENCES rooms(id)
+    ON DELETE CASCADE,
+  CONSTRAINT fk_room_players_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS chat_messages (
   id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   room_id         BIGINT UNSIGNED NOT NULL,
