@@ -47,6 +47,8 @@ public final class OfflineGameService {
     }
 
     public static boolean playerMove(OfflineGame game, int x, int y) {
+        // [UC-05.1.3]: Hệ thống kiểm tra và xác nhận ô được chọn hiện tại đang trống và đang trong lượt đi của người chơi.
+        // [UC-05.5]: Ô đã có quân cờ (Invalid Move) - Hệ thống nhận diện ô đã có giá trị (khác 0) và từ chối.
         if (game == null || game.getState() != GameState.IN_PROGRESS) {
             return false;
         }
@@ -56,23 +58,25 @@ public final class OfflineGameService {
         if (game.getCurrentPlayer() != 1) {
             return false;
         }
-
+        // [UC-05.1.5]: Hệ thống ghi nhận giá trị nước đi vào mảng trạng thái bàn cờ (board) và lưu thông tin tọa độ vào moves.
         game.addMove(x, y, 1);
 
+        // [UC-05.1.6]: Hệ thống thực hiện kiểm tra điều kiện kết thúc ván đấu (Thắng/Hòa).
+        // [UC-05.3]: Người chơi giành chiến thắng (Win) - Hệ thống xác định có 5 quân cờ liên tiếp.
         if (GomokuRules.isWinning(game, x, y, 1)) {
             game.setState(GameState.FINISHED);
             game.setResult(GameResult.P1_WIN);
             return true;
         }
 
-        // Check if board full
+        // [UC-05.4]: Trận đấu hòa (Draw) - Hệ thống kiểm tra bàn cờ đã đầy nhưng không có ai thắng.
         if (isBoardFull(game)) {
-            game.setState(GameState.FINISHED);
-            game.setResult(GameResult.DRAW);
+            game.setState(GameState.FINISHED); // [UC-05.4.2]: Trạng thái game chuyển thành FINISHED.
+            game.setResult(GameResult.DRAW); // [UC-05.4.2]: Kết quả là DRAW.
             return true;
         }
 
-        // Bot's turn
+        // [UC-05.1.7]: Hệ thống thực hiện chuyển lượt bằng cách cập nhật thuộc tính người chơi hiện tại (currentPlayer).
         game.setCurrentPlayer(2);
         return true;
     }
@@ -109,6 +113,7 @@ public final class OfflineGameService {
             return null;
         }
 
+        // [UC-05.2.2]: Máy sử dụng thuật toán AI để tìm tọa độ tối ưu và thực hiện nước đi.
         int[] move = GomokuAI.makeMove(game);
         if (move == null) {
             game.setState(GameState.FINISHED);
@@ -116,8 +121,10 @@ public final class OfflineGameService {
             return null;
         }
 
+        // [UC-05.1.5]: Ghi nhận nước đi của Máy vào board và moves.
         game.addMove(move[0], move[1], 2);
 
+        // [UC-05.2.3]: Hệ thống kiểm tra điều kiện kết thúc cho nước đi của Máy.
         if (GomokuRules.isWinning(game, move[0], move[1], 2)) {
             game.setState(GameState.FINISHED);
             game.setResult(GameResult.P2_WIN);
@@ -130,6 +137,7 @@ public final class OfflineGameService {
             return move;
         }
 
+        // [UC-05.2.4]: Hệ thống chuyển lại lượt cho Người chơi (P1).
         game.setCurrentPlayer(1);
         return move;
     }
@@ -138,6 +146,8 @@ public final class OfflineGameService {
         if (game == null || game.getState() != GameState.IN_PROGRESS) {
             return false;
         }
+        // [UC-05.7]: Đầu hàng (Resign).
+        // [UC-05.7.2]: Hệ thống xác nhận và lập tức chuyển trạng thái sang FINISHED.
         game.setState(GameState.FINISHED);
         if (game.getGameMode() == GameMode.TWO_PLAYERS) {
             game.setResult(game.getCurrentPlayer() == 1 ? GameResult.P2_WIN : GameResult.P1_WIN);
@@ -169,6 +179,9 @@ public final class OfflineGameService {
         game.setResult(GameResult.NONE);
         game.setCurrentPlayer(game.getMoves().size() % 2 == 0 ? 1 : 2);
         game.setUpdatedAt(System.currentTimeMillis());
+        // [UC-05.6]: Hoàn tác nước đi (Undo).
+        // [UC-05.6.2 & 5.6.3]: Hệ thống xóa 2 nước (đấu máy) hoặc 1 nước (đấu 2 người) và cập nhật lại trạng thái.
+        // (Logic xóa moves và cập nhật currentPlayer nằm ở đây)
         return true;
     }
 
