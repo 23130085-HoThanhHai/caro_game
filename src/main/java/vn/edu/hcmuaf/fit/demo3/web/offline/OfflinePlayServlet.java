@@ -94,6 +94,8 @@ public class OfflinePlayServlet extends HttpServlet {
         }
 
         if ("move".equals(action)) {
+            // [UC-05.1.4]: Hệ thống nhận yêu cầu xử lý nước đi (Action: move) từ Client. [cite: 3]
+            // ... (xử lý gọi playerMove hoặc localMove) ...
             try {
                 int x = Integer.parseInt(request.getParameter("x"));
                 int y = Integer.parseInt(request.getParameter("y"));
@@ -111,6 +113,7 @@ public class OfflinePlayServlet extends HttpServlet {
                 }
 
                 if (game.getGameMode() == GameMode.VS_BOT && game.getState().toString().equals("IN_PROGRESS")) {
+                    // [UC-05.2.1]: Hệ thống tự động gọi hàm botMove trong OfflineGameService sau nước đi của người chơi. [cite: 3]
                     OfflineGameService.botMove(game);
                 }
                 response.getWriter().write(buildGameResponse(game, true));

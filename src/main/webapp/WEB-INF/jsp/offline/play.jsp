@@ -412,9 +412,11 @@
     function bindBoardClicks() {
       const board = document.getElementById('gameBoard');
       if (!board) return;
-      board.addEventListener('click', (e) => {
+        board.addEventListener('click', (e) => {
+        // [UC-05.1.1]: Người chơi chọn một ô trống trên bàn cờ bằng cách click chuột vào các ô có thuộc tính board-cell. [cite: 5]
         const cell = e.target.closest('.board-cell');
         if (!cell) return;
+        // [UC-05.1.2]: Hệ thống xác định vị trí của ô thông qua các thuộc tính tọa độ data-x và data-y. [cite: 5]
         const x = Number(cell.dataset.x);
         const y = Number(cell.dataset.y);
         makeMove(x, y, gameId);
@@ -428,11 +430,13 @@
       }
       if (isBusy) return;
       if (gameData.gameMode === 'VS_BOT' && gameData.currentPlayer !== 1) return;
+      // [UC-05.1.3]: Hệ thống kiểm tra ô chọn hiện tại đang trống (board[y][x] == 0) phía Client. [cite: 5]
       if (gameData.board[y][x] !== 0) return;
 
       try {
         isBusy = true;
-        const res = await fetch(offlineBasePath, {
+      // [UC-05.1.4]: Hệ thống gửi yêu cầu xử lý nước đi đến máy chủ thông qua phương thức POST. [cite: 5]
+      const res = await fetch(offlineBasePath, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: 'action=move&gameId=' + gId + '&x=' + x + '&y=' + y
@@ -455,6 +459,8 @@
     }
 
     async function resign() {
+    // [UC-05.7.1]: Người chơi nhấn nút "Thua". [cite: 5]
+    // (Logic gửi request POST action=resign)
       const msg = gameData.gameMode === 'TWO_PLAYERS'
               ? ('Bạn chắc chứ? ' + (gameData.currentPlayer === 1 ? 'Người chơi 2' : 'Người chơi 1') + ' sẽ thắng.')
               : 'Bạn chắc chứ? Máy sẽ thắng.';
@@ -473,6 +479,8 @@
     }
 
     async function undoMove() {
+    // [UC-05.6.1]: Người chơi nhấn nút "Hoàn tác". [cite: 5]
+    // (Logic gửi request POST action=undo)
       const undoMessage = gameData.gameMode === 'TWO_PLAYERS'
               ? 'Hoàn tác nước đi gần nhất?'
               : 'Hoàn tác lượt vừa đánh (bạn + máy)?';
@@ -497,9 +505,13 @@
     function updateGameUI(nextGame) {
       const prevGame = gameData;
       gameData = nextGame;
-      renderBoard(prevGame, nextGame);
-      renderStatus();
-      renderMoves();
+    // [UC-05.1.8]: Hệ thống cập nhật giao diện người dùng. [cite: 5]
+    // [UC-05.1.8.1]: Hiển thị quân cờ tương ứng (stone-player hoặc stone-bot). [cite: 5]
+    renderBoard(prevGame, nextGame);
+    // [UC-05.1.8.3]: Cập nhật thông tin lượt đi tiếp theo hoặc trạng thái thắng/thua. [cite: 5]
+    renderStatus();
+    // [UC-05.1.8.2]: Cập nhật danh sách lịch sử nước đi trực quan. [cite: 5]
+    renderMoves();
       updateButtons();
     }
 

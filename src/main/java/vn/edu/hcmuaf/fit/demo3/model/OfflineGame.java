@@ -70,6 +70,8 @@ public class OfflineGame implements Serializable {
     }
 
     public void addMove(int x, int y, int player) {
+        // [UC-05.1.5]: Hệ thống ghi nhận giá trị nước đi vào mảng trạng thái bàn cờ (board)
+        // và lưu thông tin tọa độ vào danh sách lịch sử di chuyển (moves).
         setCell(x, y, (byte) player);
         moves.add(new int[]{x, y});
         setUpdatedAt(System.currentTimeMillis());
