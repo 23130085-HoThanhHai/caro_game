@@ -1,82 +1,94 @@
 package vn.edu.hcmuaf.fit.demo3.service;
 
-import vn.edu.hcmuaf.fit.demo3.db.DbUtil;
+import vn.edu.hcmuaf.fit.demo3.dao.RoomDao;
+import vn.edu.hcmuaf.fit.demo3.model.AuthUser;
 import vn.edu.hcmuaf.fit.demo3.model.Room;
 
-import java.sql.*;
-import java.util.ArrayList;
+import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.List;
-public class RoomService {
+import java.util.Optional;
 
-    public List<Room> getAvailableRooms() {
-        List<Room> rooms = new ArrayList<>();
+public final class RoomService {
+    private static final String CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private static final SecureRandom RANDOM = new SecureRandom();
 
-        String sql = "SELECT * FROM rooms WHERE status = 'OPEN'";
+    private final RoomDao roomDao = new RoomDao();
 
-        try (Connection conn = DbUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                Room room = new Room();
-                room.setRoomId(rs.getInt("room_id"));
-                room.setRoomName(rs.getString("room_name"));
-                room.setMaxPlayers(rs.getInt("max_players"));
-                room.setCurrentPlayers(rs.getInt("current_players"));
-                room.setStatus(rs.getString("status"));
-
-                rooms.add(room);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public Room createRoom(AuthUser authUser, String roomName, int boardSize) throws SQLException, RoomException {
+        requireLogin(authUser);
+        if (roomName == null || roomName.isBlank()) {
+            throw new RoomException("Tên phòng không được để trống");
+        }
+        if (roomName.length() > 100) {
+            throw new RoomException("Tên phòng tối đa 100 ký tự");
+        }
+        if (boardSize < 5 || boardSize > 50) {
+            throw new RoomException("Kích thước bàn cờ phải từ 5 đến 50");
         }
 
-        return rooms;
+        String roomCode = generateUniqueRoomCode();
+        long roomId = roomDao.createRoom(roomCode, roomName.trim(), boardSize, authUser.getId(), null);
+        roomDao.addHostToRoom(roomId, authUser.getId());
+        return getRoomById(roomId).orElseThrow(() -> new RoomException("Không tải được phòng vừa tạo"));
     }
-    public String joinRoom(int roomId, int playerId) {
 
-        String checkRoom = "SELECT * FROM rooms WHERE id = ?";
-        String insertPlayer = "INSERT INTO room_members(user_id, room_id) VALUES (?, ?)";
-        String updateRoom = "UPDATE rooms SET status = 'IN_GAME' WHERE id = ?";
-
-        try (Connection conn = DbUtil.getConnection()) {
-
-            conn.setAutoCommit(false);
-
-            PreparedStatement checkStmt = conn.prepareStatement(checkRoom);
-            checkStmt.setInt(1, roomId);
-
-            ResultSet rs = checkStmt.executeQuery();
-
-            if (!rs.next()) {
-                return "ROOM_NOT_FOUND";
-            }
-            int currentPlayers = rs.getInt("current_players");
-            int maxPlayers = rs.getInt("max_players");
-            String status = rs.getString("status");
-
-            if (currentPlayers >= maxPlayers) {
-                return "ROOM_FULL";
-            }
-
-            if ("IN_GAME".equals(status)) {
-                return "ROOM_PLAYING";
-            }
-            PreparedStatement insertStmt = conn.prepareStatement(insertPlayer);
-            insertStmt.setInt(1, playerId);
-            insertStmt.setInt(2, roomId);
-            insertStmt.executeUpdate();
-
-            PreparedStatement updateStmt = conn.prepareStatement(updateRoom);
-            updateStmt.setInt(1, roomId);
-            updateStmt.executeUpdate();
-
-            conn.commit();
-
-            return "SUCCESS";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "SERVER_ERROR";
+    public Room joinByCode(AuthUser authUser, String roomCode) throws SQLException, RoomException {
+        requireLogin(authUser);
+        if (roomCode == null || roomCode.isBlank()) {
+            throw new RoomException("Vui lòng nhập mã phòng");
         }
+
+        String normalizedCode = roomCode.trim().toUpperCase();
+        Room room = roomDao.findByCode(normalizedCode).orElseThrow(() -> new RoomException("Phòng không tồn tại"));
+
+        RoomDao.JoinResult result = roomDao.joinRoom(room.getId(), authUser.getId());
+        if (result == RoomDao.JoinResult.NOT_WAITING) {
+            throw new RoomException("Phòng không ở trạng thái chờ");
+        }
+        if (result == RoomDao.JoinResult.FULL) {
+            throw new RoomException("Phòng đã đầy");
+        }
+        if (result == RoomDao.JoinResult.NOT_FOUND) {
+            throw new RoomException("Phòng không tồn tại");
+        }
+
+        return getRoomByCode(normalizedCode).orElseThrow(() -> new RoomException("Không tải được phòng"));
+    }
+
+    public Optional<Room> getRoomByCode(String roomCode) throws SQLException {
+        Optional<Room> roomOpt = roomDao.findByCode(roomCode);
+        if (roomOpt.isEmpty()) return Optional.empty();
+        Room room = roomOpt.get();
+        room.setPlayers(roomDao.findPlayers(room.getId()));
+        return Optional.of(room);
+    }
+
+    public Optional<Room> getRoomById(long roomId) throws SQLException {
+        Optional<Room> roomOpt = roomDao.findById(roomId);
+        if (roomOpt.isEmpty()) return Optional.empty();
+        Room room = roomOpt.get();
+        room.setPlayers(roomDao.findPlayers(room.getId()));
+        return Optional.of(room);
+    }
+
+    private String generateUniqueRoomCode() throws SQLException, RoomException {
+        for (int i = 0; i < 30; i++) {
+            String code = randomCode(6 + RANDOM.nextInt(3)); // 6-8 chars
+            if (!roomDao.existsByCode(code)) return code;
+        }
+        throw new RoomException("Không thể tạo mã phòng, vui lòng thử lại");
+    }
+
+    private String randomCode(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(CODE_CHARS.charAt(RANDOM.nextInt(CODE_CHARS.length())));
+        }
+        return sb.toString();
+    }
+
+    private void requireLogin(AuthUser authUser) throws RoomException {
+        if (authUser == null) throw new RoomException("Bạn cần đăng nhập để dùng chức năng phòng");
     }
 }
