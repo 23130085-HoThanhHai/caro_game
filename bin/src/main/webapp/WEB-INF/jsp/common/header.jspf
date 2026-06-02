@@ -1,0 +1,45 @@
+<%@ page pageEncoding="UTF-8" %>
+<%@ page import="vn.edu.hcmuaf.fit.demo3.model.AuthUser" %>
+<%!
+  private static String h(String s) {
+    if (s == null) return "";
+    return s
+      .replace("&", "&amp;")
+      .replace("<", "&lt;")
+      .replace(">", "&gt;")
+      .replace("\"", "&quot;")
+      .replace("'", "&#x27;");
+  }
+%>
+<%
+  String activeNav = (String) request.getAttribute("activeNav");
+  if (activeNav == null) {
+    activeNav = "";
+  }
+
+  AuthUser authUser = (AuthUser) session.getAttribute("authUser");
+%>
+<header class="site-header" role="banner">
+  <div class="container header-inner">
+    <a class="brand" href="index.jsp" aria-label="Gomoku Zen">
+      <span class="brand-name">Gomoku Zen</span>
+    </a>
+
+    <nav class="nav" aria-label="Điều hướng">
+      <a class="nav-link<%= "home".equals(activeNav) ? " is-active" : "" %>" href="index.jsp">Sảnh</a>
+      <a class="nav-link<%= "leaderboard".equals(activeNav) ? " is-active" : "" %>" href="leaderboard.jsp">Bảng xếp hạng</a>
+      <a class="nav-link<%= "rules".equals(activeNav) ? " is-active" : "" %>" href="rules.jsp">Luật chơi</a>
+      <a class="nav-link<%= "community".equals(activeNav) ? " is-active" : "" %>" href="community.jsp">Cộng đồng</a>
+    </nav>
+
+    <div class="header-actions">
+      <% if (authUser == null) { %>
+        <a class="btn btn-ghost" href="login">Đăng nhập</a>
+        <a class="btn btn-primary" href="register">Đăng ký</a>
+      <% } else { %>
+        <span class="btn btn-ghost" aria-label="Tài khoản"><%= h(authUser.effectiveName()) %></span>
+        <a class="btn btn-outline" href="logout">Đăng xuất</a>
+      <% } %>
+    </div>
+  </div>
+</header>

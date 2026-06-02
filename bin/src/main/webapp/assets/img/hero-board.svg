@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="90" y1="90" x2="1150" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B0F14"/>
+      <stop offset="1" stop-color="#0F1A24"/>
+    </linearGradient>
+    <linearGradient id="board" x1="230" y1="210" x2="920" y2="660" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A9723D"/>
+      <stop offset="1" stop-color="#6E4524"/>
+    </linearGradient>
+    <linearGradient id="woodSheen" x1="250" y1="210" x2="950" y2="680" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.06"/>
+    </linearGradient>
+    <radialGradient id="stoneWhite" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 0) rotate(90) scale(20)">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#C9CDD2"/>
+    </radialGradient>
+    <radialGradient id="stoneBlack" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(0 0) rotate(90) scale(20)">
+      <stop stop-color="#3A4350"/>
+      <stop offset="1" stop-color="#0A0D12"/>
+    </radialGradient>
+    <filter id="softShadow" x="0" y="0" width="200%" height="200%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="860" fill="url(#bg)"/>
+
+  <!-- subtle vignette -->
+  <ellipse cx="740" cy="310" rx="620" ry="420" fill="#000" opacity="0.18"/>
+
+  <!-- board base -->
+  <g filter="url(#softShadow)">
+    <path d="M250 170H975c28 0 50 22 50 50v450c0 28-22 50-50 50H250c-28 0-50-22-50-50V220c0-28 22-50 50-50Z" fill="#0E1117" opacity="0.65"/>
+    <path d="M290 220H935c22 0 40 18 40 40v360c0 22-18 40-40 40H290c-22 0-40-18-40-40V260c0-22 18-40 40-40Z" fill="url(#board)"/>
+    <path d="M290 220H935c22 0 40 18 40 40v360c0 22-18 40-40 40H290c-22 0-40-18-40-40V260c0-22 18-40 40-40Z" fill="url(#woodSheen)"/>
+  </g>
+
+  <!-- grid -->
+  <g opacity="0.55" stroke="#2A1A10" stroke-width="2">
+    <!-- vertical lines -->
+    <line x1="335" y1="260" x2="335" y2="620"/>
+    <line x1="395" y1="260" x2="395" y2="620"/>
+    <line x1="455" y1="260" x2="455" y2="620"/>
+    <line x1="515" y1="260" x2="515" y2="620"/>
+    <line x1="575" y1="260" x2="575" y2="620"/>
+    <line x1="635" y1="260" x2="635" y2="620"/>
+    <line x1="695" y1="260" x2="695" y2="620"/>
+    <line x1="755" y1="260" x2="755" y2="620"/>
+    <line x1="815" y1="260" x2="815" y2="620"/>
+    <line x1="875" y1="260" x2="875" y2="620"/>
+
+    <!-- horizontal lines -->
+    <line x1="290" y1="305" x2="975" y2="305"/>
+    <line x1="290" y1="365" x2="975" y2="365"/>
+    <line x1="290" y1="425" x2="975" y2="425"/>
+    <line x1="290" y1="485" x2="975" y2="485"/>
+    <line x1="290" y1="545" x2="975" y2="545"/>
+    <line x1="290" y1="605" x2="975" y2="605"/>
+  </g>
+
+  <!-- stones -->
+  <g>
+    <g transform="translate(840 330)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneWhite)"/>
+      <circle cx="-6" cy="-8" r="6" fill="#FFF" opacity="0.65"/>
+    </g>
+    <g transform="translate(900 330)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneWhite)"/>
+      <circle cx="-6" cy="-8" r="6" fill="#FFF" opacity="0.65"/>
+    </g>
+    <g transform="translate(960 330)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneWhite)"/>
+      <circle cx="-6" cy="-8" r="6" fill="#FFF" opacity="0.65"/>
+    </g>
+
+    <g transform="translate(660 560)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneBlack)"/>
+      <circle cx="-5" cy="-7" r="6" fill="#FFF" opacity="0.18"/>
+    </g>
+    <g transform="translate(720 560)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneBlack)"/>
+      <circle cx="-5" cy="-7" r="6" fill="#FFF" opacity="0.18"/>
+    </g>
+    <g transform="translate(780 560)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneBlack)"/>
+      <circle cx="-5" cy="-7" r="6" fill="#FFF" opacity="0.18"/>
+    </g>
+
+    <g transform="translate(540 440)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneBlack)"/>
+      <circle cx="-5" cy="-7" r="6" fill="#FFF" opacity="0.18"/>
+    </g>
+    <g transform="translate(600 440)">
+      <circle cx="0" cy="0" r="20" fill="url(#stoneWhite)"/>
+      <circle cx="-6" cy="-8" r="6" fill="#FFF" opacity="0.65"/>
+    </g>
+  </g>
+
+  <!-- foreground blur hint -->
+  <path d="M0 760C210 680 420 655 620 665c240 12 410 80 580 155v60H0v-280Z" fill="#000" opacity="0.22"/>
+</svg>
