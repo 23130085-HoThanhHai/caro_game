@@ -16,7 +16,7 @@
   <style>
     .room-layout { display:grid; grid-template-columns: 1fr 320px; gap:18px; }
     .board { display:grid; gap:0; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:8px; grid-template-columns: repeat(var(--board-size), 1fr); }
-    .cell { width:30px; height:30px; border:1px solid rgba(16,24,40,0.1); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:20px; position: relative; }
+    .cell { width:30px; height:30px; border:1px solid rgba(16,24,40,0.1); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:20px; }
     .cell.win-cell { background: rgba(241,196,15,0.25); }
     .stone {
       width: 22px;
@@ -55,37 +55,6 @@
     }
     .meta { color:#667085; font-size:13px; }
     @media (max-width: 980px) { .room-layout { grid-template-columns: 1fr; } }
-
-    /* Blue dot indicator over the absolute last move played */
-    .cell.last-move-cell::after {
-      content: '';
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: #2196F3;
-      box-shadow: 0 0 6px #2196F3;
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    /* Scrollable Move History notation board */
-    .move-log-box {
-      height: 160px;
-      overflow-y: auto;
-      border: 1px solid #eaecf0;
-      border-radius: 8px;
-      padding: 8px 12px;
-      background: #f8f9fa;
-      font-family: monospace;
-      font-size: 13px;
-    }
-    .move-log-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px solid #f2f4f7;
-    }
   </style>
 </head>
 <body>
@@ -125,13 +94,6 @@
             </div>
 
             <div class="card" style="padding:20px;">
-              <h3 style="margin-top:0; font-size:15px; margin-bottom:10px;">Biên bản trận đấu</h3>
-              <div id="moveLog" class="move-log-box">
-                <div style="color:#667085; text-align:center; padding-top:60px;">Chưa có nước đi nào</div>
-              </div>
-            </div>
-
-            <div class="card" style="padding:20px;">
               <h3 style="margin-top:0;">Người chơi trong phòng</h3>
               <div style="display:grid; gap:8px;">
                 <% for (RoomPlayer p : room.getPlayers()) { %>
@@ -161,25 +123,6 @@
   let latestState = null;
   let renderedBoard = null;
   let isSending = false;
-
-  // Added: Audio playback data management references
-  let cachedMoveCount = 0;
-  let endMatchAudioTriggered = false;
-
-  const gameAudioEngine = {
-    stone: new Audio(contextPath + '/assets/audio/stone.mp3'),
-    win: new Audio(contextPath + '/assets/audio/win.mp3'),
-    lose: new Audio(contextPath + '/assets/audio/lose.mp3'),
-    draw: new Audio(contextPath + '/assets/audio/draw.mp3')
-  };
-
-  function triggerGameSound(trackName) {
-    const asset = gameAudioEngine[trackName];
-    if (asset) {
-      asset.currentTime = 0;
-      asset.play().catch(e => console.log("Audio deferred until context block interaction click: ", e));
-    }
-  }
 
   document.addEventListener('DOMContentLoaded', () => {
     bindBoard();
@@ -267,7 +210,6 @@
         else cell.innerHTML = "";
       }
       cell.classList.remove('win-cell');
-      cell.classList.remove('last-move-cell'); // Added: Reset tracking dot class on loop passes
     });
     renderedBoard = nextBoard.map(row => row.slice());
 
@@ -278,72 +220,11 @@
       });
     }
 
-    // Added: Highlight absolute newest array coordinates index
-    if (Array.isArray(latestState.moves) && latestState.moves.length > 0) {
-      const lastMove = latestState.moves[latestState.moves.length - 1];
-      const lastCell = document.querySelector(`#board .cell[data-x="${lastMove[0]}"][data-y="${lastMove[1]}"]`);
-      if (lastCell) {
-        lastCell.classList.add('last-move-cell');
-      }
-    }
-
-    // Added: Chronological step list engine loop parsing positions to algebraic notations
-    const logBox = document.getElementById('moveLog');
-    if (logBox && Array.isArray(latestState.moves) && latestState.moves.length > 0) {
-      let rowsHtml = "";
-      for (let i = 0; i < latestState.moves.length; i += 2) {
-        const p1Move = latestState.moves[i];
-        const p1Notation = String.fromCharCode(65 + p1Move[0]) + (p1Move[1] + 1);
-        
-        let p2Notation = "";
-        if (i + 1 < latestState.moves.length) {
-          const p2Move = latestState.moves[i + 1];
-          p2Notation = String.fromCharCode(65 + p2Move[0]) + (p2Move[1] + 1);
-        }
-        
-        rowsHtml += `
-          <div class="move-log-row">
-            <span style="color:#667085;">Nước ${Math.floor(i/2) + 1}</span>
-            <span style="font-weight:600; color:#1abc9c;">${p1Notation}</span>
-            <span style="font-weight:600; color:#2c3e50;">${p2Notation || '--'}</span>
-          </div>`;
-      }
-      logBox.innerHTML = rowsHtml;
-      logBox.scrollTop = logBox.scrollHeight;
-    } else if (logBox) {
-      logBox.innerHTML = `<div style="color:#667085; text-align:center; padding-top:60px;">Chưa có nước đi nào</div>`;
-    }
-
     if (latestState.gameStatus === 'FINISHED') {
       if (replayBtn) replayBtn.style.display = 'block';
-
-      // Added: Over-state physical audios tracker triggers exactly once at completion boundaries
-      if (!endMatchAudioTriggered) {
-        if (latestState.result === 'DRAW') {
-          triggerGameSound('draw');
-        } else {
-          const winnerNo = (latestState.result === 'P1_WIN') ? 1 : 2;
-          if (latestState.yourPlayerNo === winnerNo) {
-            triggerGameSound('win');
-          } else {
-            triggerGameSound('lose');
-          }
-        }
-        endMatchAudioTriggered = true;
-      }
     } else {
       if (replayBtn) replayBtn.style.display = 'none';
-      endMatchAudioTriggered = false;
-
-      // Added: Piece landing clip triggers when lengths scale higher
-      if (Array.isArray(latestState.moves) && latestState.moves.length > cachedMoveCount) {
-        if (cachedMoveCount > 0) {
-          triggerGameSound('stone');
-        }
-      }
     }
-
-    cachedMoveCount = Array.isArray(latestState.moves) ? latestState.moves.length : 0;
   }
 
   async function restartGame() {

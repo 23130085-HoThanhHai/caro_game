@@ -1,0 +1,71 @@
+<%@ page pageEncoding="UTF-8" %>
+<footer class="site-footer" role="contentinfo">
+  <div class="container footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-name">Gomoku Zen</div>
+        <div class="footer-desc">Cờ caro (Gomoku) tối giản — luyện chiến thuật qua từng nước đi.</div>
+        <div class="footer-note">Luật thắng: 5 quân liên tiếp (kể cả bị chặn 2 đầu).</div>
+      </div>
+
+      <div class="footer-columns" aria-label="Liên kết">
+        <div class="footer-col" aria-label="Liên kết nhanh">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-col-links">
+            <a href="index.jsp">Sảnh</a>
+            <a href="leaderboard.jsp">Bảng xếp hạng</a>
+            <a href="rules.jsp">Luật chơi</a>
+            <a href="community.jsp">Cộng đồng</a>
+          </div>
+        </div>
+
+        <div class="footer-col" aria-label="Chế độ">
+          <div class="footer-col-title">Chế độ</div>
+          <div class="footer-col-links">
+            <a href="index.jsp#modes">Chơi nhanh</a>
+            <a href="index.jsp#modes">Xếp hạng</a>
+            <a href="index.jsp#modes">Offline</a>
+            <a href="index.jsp#modes">Phòng riêng</a>
+          </div>
+        </div>
+
+        <div class="footer-col" aria-label="Hỗ trợ">
+          <div class="footer-col-title">Hỗ trợ</div>
+          <div class="footer-col-links">
+            <a href="rules.jsp">Luật &amp; FAQ</a>
+            <a href="#">Báo lỗi</a>
+            <a href="#">Chính sách quyền riêng tư</a>
+            <a href="#">Điều khoản dịch vụ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom" aria-label="Thông tin bản quyền">
+      <div class="footer-meta">© <span id="year">2026</span> Gomoku Zen. Làm chủ nghệ thuật chiến thuật.</div>
+
+      <div class="footer-actions" aria-label="Thao tác">
+        <button class="icon-btn" type="button" aria-label="Ngôn ngữ">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="2" />
+            <path d="M3.6 9h16.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+            <path d="M3.6 15h16.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+            <path d="M12 3a12 12 0 0 1 0 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+            <path d="M12 3a12 12 0 0 0 0 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+          </svg>
+        </button>
+        <button class="icon-btn" type="button" aria-label="Chia sẻ">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2" />
+            <path d="M6 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2" />
+            <path d="M18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" stroke="currentColor" stroke-width="2" />
+            <path d="M8.6 10.7l3.7-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M8.6 11.3l6.8 3.9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/app.js" defer></script>
