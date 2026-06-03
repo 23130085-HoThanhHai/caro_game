@@ -115,7 +115,31 @@
 
           <div style="display:grid; gap:14px;">
             <div class="card" style="padding:20px; display:grid; gap:8px;">
-              <div><strong>Mã phòng:</strong> <span style="color:#b45309;"><%= room.getRoomCode() %></span></div>
+                <%-- Làm nổi bật và thêm nút "Copy" Mã Phòng (room.jsp) --%>
+                <div style="background: #fffbeb; border: 1px dashed #f59e0b; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div>
+                        <div style="font-size: 13px; color: #92400e; margin-bottom: 4px;">Mã phòng của bạn:</div>
+                        <strong id="roomCodeText" style="font-size: 24px; color: #b45309; letter-spacing: 2px;"><%= room.getRoomCode() %></strong>
+                    </div>
+                    <button onclick="copyRoomCode()" class="btn btn-primary" type="button" style="padding: 8px 12px; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+
+                <script>
+                    function copyRoomCode() {
+                        const code = document.getElementById('roomCodeText').innerText;
+                        navigator.clipboard.writeText(code).then(() => {
+                            alert('Đã sao chép mã phòng: ' + code);
+                        }).catch(err => {
+                            console.error('Không thể sao chép', err);
+                        });
+                    }
+                </script>
               <div><strong>Trạng thái:</strong> <span id="statusText"><%= room.getStatus() %></span></div>
               <div><strong>Kích thước:</strong> <%= room.getBoardSize() %>x<%= room.getBoardSize() %></div>
               <div><strong>Số người:</strong> <span id="playersJoined"><%= room.getPlayers().size() %></span>/2</div>
