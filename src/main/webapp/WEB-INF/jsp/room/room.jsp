@@ -183,16 +183,34 @@
                 border-radius:8px;
                 margin-bottom:10px;">
 
-                      <c:forEach items="${messages}" var="msg">
-                          <div style="margin-bottom:8px;">
-                              <strong>${msg.senderUsername}</strong>
-                                  ${msg.content}
-                          </div>
-                      </c:forEach>
+
+        <%@ page import="java.util.List" %>
+        <%@ page import="vn.edu.hcmuaf.fit.demo3.model.ChatMessage" %>
+
+        <%
+                        List<ChatMessage> messages = (List<ChatMessage>) request.getAttribute("messages");
+
+                        if(messages != null){
+                        for(ChatMessage msg : messages){
+        %>
+
+                    <div style="margin-bottom:8px;">
+                        <strong>
+                            <%= msg.getSenderUsername() %>
+                        </strong>
+        :
+                        <%= msg.getMessageText() %>
+                    </div>
+
+        <%
+            }
+        }
+        %>
 
                   </div>
 
                   <form id="chatForm">
+
                       <input type="hidden"
                              id="roomId"
                              value="<%= room.getId() %>">
@@ -211,6 +229,8 @@
                               style="margin-top:10px;width:100%;">
                           Gửi
                       </button>
+
+
                   </form>
               </div>
 
@@ -434,76 +454,95 @@
   }
 
 
-  document.getElementById("chatForm")
-      .addEventListener("submit", async function(e){
+  document
+      .getElementById("chatForm")
+      .addEventListener(
+          "submit",
+          async function(e){
 
-          e.preventDefault();
+              e.preventDefault();
 
-          const text =
-              document.getElementById("messageText").value.trim();
+              const roomId =
+                  document.getElementById("roomId").value;
 
-          if(!text) return;
+              const message =
+                  document.getElementById("messageText").value;
 
-          const roomId =
-              document.getElementById("roomId").value;
-
-          const body =
-              "roomId=" + roomId +
-              "&message=" + encodeURIComponent(text);
-
-          const response = await fetch(
-              contextPath + "/chat/send",
-              {
-                  method:"POST",
-                  headers:{
-                      "Content-Type":
-                          "application/x-www-form-urlencoded"
-                  },
-                  body:body
+              if(!message.trim()){
+                  return;
               }
-          );
 
-          const result = await response.json();
+              const body =
+                  "roomId="
+                  + encodeURIComponent(roomId)
+                  + "&message="
+                  + encodeURIComponent(message);
 
-          if(result.success){
-              document.getElementById("messageText").value="";
-              loadMessages();
-          }else{
-              alert(result.error);
-          }
-      });
+              const response =
+                  await fetch(
+                      "<%=request.getContextPath()%>/chat/send",
+                      {
+                          method:"POST",
+                          headers:{
+                              "Content-Type":
+                                  "application/x-www-form-urlencoded"
+                          },
+                          body:body
+                      });
 
+              const result =
+                  await response.json();
+
+              if(result.success){
+
+                  document
+                      .getElementById("messageText")
+                      .value = "";
+
+                  await loadMessages();
+              }
+          });
   async function loadMessages(){
 
       const roomId =
-          document.getElementById("roomId").value;
+          document.getElementById(
+              "roomId").value;
 
-      const response = await fetch(
-          contextPath + "/chat/messages?roomId=" + roomId
-      );
+      const response =
+          await fetch(
+              "<%=request.getContextPath()%>"
+              + "/chat/messages?roomId="
+              + roomId);
 
-      const data = await response.json();
+      const messages = await response.json();
 
-      let html = "";
+      console.log(messages);
 
-      data.messages.forEach(msg => {
+      const chatBox =
+          document.getElementById(
+              "chatMessages");
 
-          html += `
-            <div style="margin-bottom:8px;">
-                <strong>${msg.senderUsername}</strong>:
-                ${msg.content}
+      chatBox.innerHTML = "";
+
+      messages.forEach(msg => {
+
+          chatBox.innerHTML += `
+            <div>
+                <strong>
+                    ${msg.senderUsername ? msg.senderUsername : "System"}
+                </strong> :
+                ${msg.messageText}
             </div>
         `;
       });
 
-      const box =
-          document.getElementById("chatMessages");
-
-      box.innerHTML = html;
-      box.scrollTop = box.scrollHeight;
+      chatBox.scrollTop =
+          chatBox.scrollHeight;
   }
 
-  setInterval(loadMessages, 2000);
+  setInterval(loadMessages,2000);
+
+  loadMessages();
 
 
 </script>

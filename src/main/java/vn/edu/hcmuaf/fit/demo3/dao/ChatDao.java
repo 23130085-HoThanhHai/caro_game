@@ -77,18 +77,16 @@ public class ChatDao {
                     ChatMessage msg = new ChatMessage();
 
                     msg.setId(rs.getLong("id"));
-
                     msg.setRoomId(rs.getLong("room_id"));
 
                     long senderId = rs.getLong("sender_user_id");
-
-                    if (!rs.wasNull()) {
+                    if(!rs.wasNull()){
                         msg.setSenderUserId(senderId);
                     }
 
                     msg.setSenderUsername(rs.getString("username"));
 
-                    msg.setMessageType(MessageType.fromDbValue(rs.getString("message_type")));
+                    msg.setMessageType(MessageType.valueOf(rs.getString("message_type")));
 
                     msg.setMessageText(rs.getString("message_text"));
 

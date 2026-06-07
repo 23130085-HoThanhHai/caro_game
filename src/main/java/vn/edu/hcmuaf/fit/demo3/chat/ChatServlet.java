@@ -15,43 +15,49 @@ public class ChatServlet extends HttpServlet {
     private final ChatService chatService = new ChatService();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws IOException {
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         try {
 
-            HttpSession session = request.getSession(false);
-
-            if (session == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Bạn chưa đăng nhập");
-                return;
-            }
-
             AuthUser user =
-                    (AuthUser) session.getAttribute(
-                            AuthSession.AUTH_USER);
+                    (AuthUser) request.getSession(false)
+                            .getAttribute(AuthSession.AUTH_USER);
 
             if (user == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Bạn chưa đăng nhập");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write(
+                        "{\"success\":false,\"message\":\"Chưa đăng nhập\"}");
                 return;
             }
 
-            long roomId = Long.parseLong(request.getParameter("roomId"));
+            long roomId = Long.parseLong(
+                    request.getParameter("roomId"));
 
-            String text = request.getParameter("message");
+            String text =
+                    request.getParameter("message");
 
-            chatService.sendMessage(user, roomId, text);
+            chatService.sendMessage(
+                    user,
+                    roomId,
+                    text);
 
-            String referer = request.getHeader("Referer");
-
-            if (referer != null) {
-                response.sendRedirect(referer);
-            } else {
-                response.sendRedirect(request.getContextPath());
-            }
+            response.getWriter().write(
+                    "{\"success\":true}");
 
         } catch (Exception e) {
 
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+            response.getWriter().write(
+                    "{\"success\":false,\"message\":\""
+                            + e.getMessage()
+                            + "\"}");
         }
     }
 }
