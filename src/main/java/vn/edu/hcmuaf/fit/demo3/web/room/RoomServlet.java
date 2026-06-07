@@ -9,14 +9,18 @@ import vn.edu.hcmuaf.fit.demo3.model.AuthUser;
 import vn.edu.hcmuaf.fit.demo3.model.Room;
 import vn.edu.hcmuaf.fit.demo3.service.RoomService;
 import vn.edu.hcmuaf.fit.demo3.web.auth.AuthSession;
+import vn.edu.hcmuaf.fit.demo3.model.ChatMessage;
+import vn.edu.hcmuaf.fit.demo3.service.ChatService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @WebServlet(name = "roomServlet", value = "/room")
 public class RoomServlet extends HttpServlet {
     private final RoomService roomService = new RoomService();
+    private final ChatService chatService = new ChatService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -40,6 +44,10 @@ public class RoomServlet extends HttpServlet {
             }
 
             Room room = roomOpt.get();
+
+            List<ChatMessage> messages = chatService.loadMessages(room.getId());
+            request.setAttribute("messages", messages);
+
             request.setAttribute("room", room);
             request.setAttribute("currentUserId", authUser.getId());
             request.getRequestDispatcher("/WEB-INF/jsp/room/room.jsp").forward(request, response);
