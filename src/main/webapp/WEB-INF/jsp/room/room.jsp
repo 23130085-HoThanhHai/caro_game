@@ -184,28 +184,42 @@
                 margin-bottom:10px;">
 
 
-        <%@ page import="java.util.List" %>
-        <%@ page import="vn.edu.hcmuaf.fit.demo3.model.ChatMessage" %>
 
-        <%
-                        List<ChatMessage> messages = (List<ChatMessage>) request.getAttribute("messages");
+                <%@ page import="java.util.List" %>
+                <%@ page import="vn.edu.hcmuaf.fit.demo3.model.ChatMessage" %>
 
-                        if(messages != null){
-                        for(ChatMessage msg : messages){
-        %>
+                <%
+                    List<ChatMessage> messages = (List<ChatMessage>) request.getAttribute("messages");
 
-                    <div style="margin-bottom:8px;">
-                        <strong>
-                            <%= msg.getSenderUsername() %>
+                    if (messages != null && !messages.isEmpty()) {
+
+                    for (ChatMessage msg : messages) {
+
+                    String senderName = msg.getSenderUsername() != null ? msg.getSenderUsername() : "System";
+                %>
+
+                    <div style="
+                        margin-bottom:8px;
+                        padding:6px;
+                        border-bottom:1px solid #eee;">
+                        <strong style="color:#2563eb;">
+                            <%= senderName %>
                         </strong>
         :
-                        <%= msg.getMessageText() %>
+                        <span>
+                            <%= msg.getMessageText() %>
+                        </span>
                     </div>
 
-        <%
-            }
-        }
-        %>
+                <%
+                    }
+                    } else {
+                %>
+
+
+                <%
+                }
+                %>
 
                   </div>
 
